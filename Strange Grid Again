@@ -1,0 +1,21 @@
+#include <iostream>
+
+int main() {
+    long long r, c;
+    std::cin >> r >> c;
+    long long result;
+
+    if (r % 2 == 1) {
+        // Odd-numbered rows have even numbers
+        long long base = (r - 1) / 2 * 10;
+        result = base + (c - 1) * 2;
+    } else {
+        // Even-numbered rows have odd numbers
+        long long base = (r - 2) / 2 * 10 + 1;
+        result = base + (c - 1) * 2;
+    }
+
+    std::cout << result << std::endl;
+
+    return 0;
+}
