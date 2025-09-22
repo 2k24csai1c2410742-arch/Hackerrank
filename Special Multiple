@@ -1,0 +1,52 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <string>
+using namespace std;
+
+string findSmallestMultiple(int n) {
+    if (n == 1) return "9";
+    
+    vector<bool> visited(n, false);
+    vector<string> path(n);
+    queue<int> q;
+    
+    q.push(0);
+    visited[0] = true;
+    path[0] = "";
+    
+    while (!q.empty()) {
+        int remainder = q.front();
+        q.pop();
+        
+        for (int digit = 0; digit <= 9; digit += 9) {
+            int newRemainder = (remainder * 10 + digit) % n;
+            string newPath = path[remainder] + char('0' + digit);
+            
+            if (newRemainder == 0 && !newPath.empty() && newPath.find('9') != string::npos) {
+                return newPath;
+            }
+            
+            if (!visited[newRemainder]) {
+                visited[newRemainder] = true;
+                path[newRemainder] = newPath;
+                q.push(newRemainder);
+            }
+        }
+    }
+    
+    return "";
+}
+
+int main() {
+    int t;
+    cin >> t;
+    
+    while (t--) {
+        int n;
+        cin >> n;
+        cout << findSmallestMultiple(n) << endl;
+    }
+    
+    return 0;
+}
