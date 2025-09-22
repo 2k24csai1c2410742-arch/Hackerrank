@@ -1,0 +1,44 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int flippingMatrix(vector<vector<int>>& matrix) {
+    int n = matrix.size() / 2;
+    int maxSum = 0;
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int val1 = matrix[i][j];
+            int val2 = matrix[i][2*n - 1 - j];
+            int val3 = matrix[2*n - 1 - i][j];
+            int val4 = matrix[2*n - 1 - i][2*n - 1 - j];
+            
+            maxSum += max({val1, val2, val3, val4});
+        }
+    }
+    
+    return maxSum;
+}
+
+int main() {
+    int q;
+    cin >> q;
+    
+    while (q--) {
+        int n;
+        cin >> n;
+        
+        vector<vector<int>> matrix(2*n, vector<int>(2*n));
+        
+        for (int i = 0; i < 2*n; i++) {
+            for (int j = 0; j < 2*n; j++) {
+                cin >> matrix[i][j];
+            }
+        }
+        
+        cout << flippingMatrix(matrix) << endl;
+    }
+    
+    return 0;
+}
