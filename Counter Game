@@ -1,0 +1,35 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+string counterGame(long long n) {
+    int moves = 0;
+    
+    while (n > 1) {
+        if ((n & (n - 1)) == 0) {
+            n /= 2;
+        } else {
+            long long powerOf2 = 1;
+            while (powerOf2 * 2 < n) {
+                powerOf2 *= 2;
+            }
+            n -= powerOf2;
+        }
+        moves++;
+    }
+    
+    return (moves % 2 == 1) ? "Louise" : "Richard";
+}
+
+int main() {
+    int t;
+    cin >> t;
+    
+    while (t--) {
+        long long n;
+        cin >> n;
+        cout << counterGame(n) << endl;
+    }
+    
+    return 0;
+}
