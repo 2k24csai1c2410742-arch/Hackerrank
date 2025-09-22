@@ -1,0 +1,34 @@
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <algorithm>
+
+struct Customer {
+    int id;
+    long long finish_time;
+};
+
+bool compareCustomers(const Customer& a, const Customer& b) {
+    if (a.finish_time != b.finish_time) {
+        return a.finish_time < b.finish_time;
+    }
+    return a.id < b.id;
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+    std::vector<Customer> customers(n);
+    for (int i = 0; i < n; ++i) {
+        long long order_time, prep_time;
+        std::cin >> order_time >> prep_time;
+        customers[i].id = i + 1;
+        customers[i].finish_time = order_time + prep_time;
+    }
+    std::sort(customers.begin(), customers.end(), compareCustomers);
+    for (int i = 0; i < n; ++i) {
+        std::cout << customers[i].id << (i == n - 1 ? "" : " ");
+    }
+    std::cout << std::endl;
+    return 0;
+}
