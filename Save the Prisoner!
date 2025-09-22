@@ -1,0 +1,17 @@
+#include <iostream>
+
+int saveThePrisoner(int n, int m, int s) {
+    int result = (s - 1 + m - 1) % n + 1;
+    return result;
+}
+
+int main() {
+    int t;
+    std::cin >> t;
+    while (t--) {
+        int n, m, s;
+        std::cin >> n >> m >> s;
+        std::cout << saveThePrisoner(n, m, s) << std::endl;
+    }
+    return 0;
+}
