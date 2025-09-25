@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <numeric>
+
+// The core logic function
+int sansaXor(const std::vector<int>& arr) {
+    int n = arr.size();
+    
+    // Key Insight: An element arr[i] contributes to the final XOR sum 
+    // if and only if it appears in an ODD number of contiguous subarrays.
+    // The number of subarrays containing arr[i] is (i + 1) * (n - i).
+
+    // Case 1: n is EVEN
+    // If n is even, (i + 1) * (n - i) is always even for all i.
+    // e.g., if i is even, n-i is even. If i is odd, i+1 is even.
+    // Thus, every element appears an even number of times, and the result is 0.
+    if (n % 2 == 0) {
+        return 0;
+    } 
+    // Case 2: n is ODD
+    // For (i + 1) * (n - i) to be ODD, both factors must be ODD.
+    // This requires:
+    // 1. (i + 1) is ODD => i is EVEN
+    // 2. (n - i) is ODD => Since n is ODD, i must be EVEN.
+    // Thus, only elements at EVEN indices (0, 2, 4, ...) appear an odd number of times.
+    else {
+        int result = 0;
+        // XOR only the elements at even indices
+        for (int i = 0; i < n; i += 2) {
+            result ^= arr[i];
+        }
+        return result;
+    }
+}
+
+int main() {
+    // Fast I/O (optional, but good practice)
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+
+    int t;
+    // Read the number of test cases
+    if (!(std::cin >> t)) return 0;
+    
+    while (t--) {
+        int n;
+        // Read the size of the array
+        if (!(std::cin >> n)) break;
+        
+        std::vector<int> arr(n);
+        // Read the array elements
+        for (int i = 0; i < n; ++i) {
+            if (!(std::cin >> arr[i])) break;
+        }
+        
+        // Calculate and print the result
+        int result = sansaXor(arr);
+        std::cout << result << "\n";
+    }
+    
+    return 0;
+}
