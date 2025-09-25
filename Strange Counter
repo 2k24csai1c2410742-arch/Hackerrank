@@ -1,0 +1,36 @@
+#include <iostream>
+#include <cmath>
+
+long long strangeCounter(long long t) {
+    long long L = 3;
+    long long T_prev_end = 0;
+
+    // Step 1: Find the cycle
+    // T_prev_end stores the end time of the previous cycle.
+    // L stores the starting value (and length) of the current cycle.
+    while (T_prev_end + L < t) {
+        T_prev_end += L;
+        L *= 2;
+    }
+
+    // Step 2: Calculate the value
+    // T_start = T_prev_end + 1
+    // The starting value of the current cycle is L.
+    
+    // Time elapsed within the cycle: t - T_start
+    long long time_elapsed = t - (T_prev_end + 1);
+
+    // Value = Start Value - Time Elapsed
+    return L - time_elapsed;
+}
+
+int main() {
+    // Standard I/O for the single integer t
+    long long t;
+    if (!(std::cin >> t)) return 0;
+    
+    // Output the result
+    std::cout << strangeCounter(t) << "\n";
+    
+    return 0;
+}
