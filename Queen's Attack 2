@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * @brief Determines the number of squares the queen can attack.
+ * @param n The size of the board (n x n).
+ * @param k The number of obstacles.
+ * @param r_q The queen's row position (1-indexed, from bottom).
+ * @param c_q The queen's column position (1-indexed, from left).
+ * @param obstacles A 2D array of obstacle coordinates [k][2].
+ * @return int The total number of squares the queen can attack.
+ */
+int queensAttack(int n, int k, int r_q, int c_q, int obstacles[][2]) {
+    // Attack distances in the 8 directions, initialized to maximum possible distances.
+    
+    // 1. Up (row increases): from r_q + 1 to n. Distance: n - r_q
+    long long dist_up = n - r_q; 
+    
+    // 2. Down (row decreases): from r_q - 1 to 1. Distance: r_q - 1
+    long long dist_down = r_q - 1;
+    
+    // 3. Right (col increases): from c_q + 1 to n. Distance: n - c_q
+    long long dist_right = n - c_q;
+    
+    // 4. Left (col decreases): from c_q - 1 to 1. Distance: c_q - 1
+    long long dist_left = c_q - 1;
+    
+    // 5. Up-Right (r increases, c increases). Limited by min(dist_up, dist_right)
+    long long dist_up_right = (dist_up < dist_right) ? dist_up : dist_right;
+    
+    // 6. Up-Left (r increases, c decreases). Limited by min(dist_up, dist_left)
+    long long dist_up_left = (dist_up < dist_left) ? dist_up : dist_left;
+    
+    // 7. Down-Right (r decreases, c increases). Limited by min(dist_down, dist_right)
+    long long dist_down_right = (dist_down < dist_right) ? dist_down : dist_right;
+    
+    // 8. Down-Left (r decreases, c decreases). Limited by min(dist_down, dist_left)
+    long long dist_down_left = (dist_down < dist_left) ? dist_down : dist_left;
+
+    // Process all obstacles to update the attack distances
+    for (int i = 0; i < k; i++) {
+        int r_obs = obstacles[i][0];
+        int c_obs = obstacles[i][1];
+        
+        // Calculate the relative difference in position
+        long long dr = (long long)r_obs - r_q;
+        long long dc = (long long)c_obs - c_q;
+        
+        // Check if the obstacle is in the same row or column (Straight Lines)
+        if (r_obs == r_q) {
+            // Same row
+            if (c_obs > c_q) {
+                // Right: distance is c_obs - c_q - 1
+                long long new_dist = dc - 1;
+                if (new_dist < dist_right) {
+                    dist_right = new_dist;
+                }
+            } else { // c_obs < c_q
+                // Left: distance is c_q - c_obs - 1
+                long long new_dist = -dc - 1; // -(c_obs - c_q) - 1
+                if (new_dist < dist_left) {
+                    dist_left = new_dist;
+                }
+            }
+        } else if (c_obs == c_q) {
+            // Same column
+            if (r_obs > r_q) {
+                // Up: distance is r_obs - r_q - 1
+                long long new_dist = dr - 1;
+                if (new_dist < dist_up) {
+                    dist_up = new_dist;
+                }
+            } else { // r_obs < r_q
+                // Down: distance is r_q - r_obs - 1
+                long long new_dist = -dr - 1; // -(r_obs - r_q) - 1
+                if (new_dist < dist_down) {
+                    dist_down = new_dist;
+                }
+            }
+        } 
+        
+        // Check if the obstacle is on a diagonal
+        else if (llabs(dr) == llabs(dc)) {
+            // It is on a diagonal
+            long long dist = llabs(dr) - 1; // Distance to the square right before the obstacle
+            
+            if (dr > 0 && dc > 0) {
+                // Up-Right
+                if (dist < dist_up_right) {
+                    dist_up_right = dist;
+                }
+            } else if (dr > 0 && dc < 0) {
+                // Up-Left
+                if (dist < dist_up_left) {
+                    dist_up_left = dist;
+                }
+            } else if (dr < 0 && dc > 0) {
+                // Down-Right
+                if (dist < dist_down_right) {
+                    dist_down_right = dist;
+                }
+            } else { // dr < 0 && dc < 0
+                // Down-Left
+                if (dist < dist_down_left) {
+                    dist_down_left = dist;
+                }
+            }
+        }
+    }
+    
+    // Sum the attack distances from all 8 directions
+    long long total_attacks = dist_up + dist_down + dist_left + dist_right +
+                              dist_up_right + dist_up_left + dist_down_right + dist_down_left;
+    
+    return (int)total_attacks;
+}
+
+// -------------------------------------------------------------------------------- //
+
+// **FIX: Corrected the scanf line in main to include c_q and the closing parenthesis.**
+int main() {
+    int n, k;
+    // Read the board size and number of obstacles
+    if (scanf("%d %d", &n, &k) != 2) return 1;
+
+    int r_q, c_q;
+    // Read the queen's position
+    if (scanf("%d %d", &r_q, &c_q) != 2) return 1; // <-- FIX IS HERE
+
+    // Dynamically allocate memory for obstacles
+    int (*obstacles)[2] = NULL;
+    if (k > 0) {
+        // Allocate memory for k rows, each with 2 columns
+        obstacles = malloc(k * sizeof(int[2])); 
+        if (obstacles == NULL) {
+            fprintf(stderr, "Memory allocation failed.\n");
+            return 1;
+        }
+        // Read obstacle positions
+        for (int i = 0; i < k; i++) {
+            if (scanf("%d %d", &obstacles[i][0], &obstacles[i][1]) != 2) {
+                free(obstacles);
+                return 1;
+            }
+        }
+    } 
+
+    // Call the solution function
+    int result = queensAttack(n, k, r_q, c_q, obstacles);
+
+    // Print the result
+    printf("%d\n", result);
+
+    // Free dynamically allocated memory if k > 0
+    if (k > 0) {
+        free(obstacles);
+    }
+    
+    return 0;
+}
